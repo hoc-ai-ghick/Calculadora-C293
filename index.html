@@ -3,163 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Módulo de Rotura (ASTM C293)</title>
+    <title>Módulo de Ruptura ASTM C293</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos adicionales para inputs con unidades integradas */
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-group input {
+            width: 100%;
+            padding-right: 3rem; /* Espacio para la unidad */
+        }
+        .input-group .unit {
+            position: absolute;
+            right: 1rem;
+            color: #6b7280;
+        }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 p-4 md:p-8 min-h-screen flex items-center justify-center">
-    <div class="max-w-lg w-full bg-white rounded-2xl shadow-xl overflow-hidden p-6 border border-slate-100">
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <!-- Tarjeta Principal -->
+    <div class="bg-white max-w-lg w-full rounded-2xl shadow-xl overflow-hidden">
         
-        <div class="text-center mb-6">
-            <h2 class="text-2xl font-extrabold text-slate-800">Módulo de Rotura</h2>
-            <p class="text-sm text-slate-500 font-medium mt-1">Norma ASTM C293 (Carga en el punto central)</p>
+        <!-- Encabezado Azul -->
+        <div class="bg-blue-600 py-6 text-center">
+            <h1 class="text-2xl font-bold text-white">Módulo de Ruptura</h1>
+            <p class="text-blue-100 text-sm mt-1">ASTM C293 - Carga en el punto central</p>
         </div>
 
-        <!-- Gráfico SVG del Ensayo -->
-        <div class="mb-6 flex justify-center bg-slate-50 rounded-xl p-4 border border-slate-200">
-            <svg viewBox="0 0 400 180" class="w-full max-w-sm">
-                <!-- Viga -->
-                <rect x="50" y="80" width="300" height="30" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
-                <!-- Apoyos inferiores -->
-                <polygon points="100,110 90,130 110,130" fill="#64748b"/>
-                <polygon points="300,110 290,130 310,130" fill="#64748b"/>
-                <line x1="90" y1="130" x2="110" y2="130" stroke="#475569" stroke-width="2"/>
-                <line x1="290" y1="130" x2="310" y2="130" stroke="#475569" stroke-width="2"/>
-                <!-- Carga P (Punto central) -->
-                <polygon points="200,80 190,60 210,60" fill="#ef4444"/>
-                <line x1="200" y1="20" x2="200" y2="60" stroke="#ef4444" stroke-width="4"/>
-                <!-- Textos y Cotas -->
-                <text x="200" y="15" text-anchor="middle" font-weight="bold" fill="#ef4444" font-size="14">Carga (P)</text>
-                <text x="200" y="150" text-anchor="middle" font-weight="bold" fill="#475569" font-size="14">Claro (L)</text>
-                <line x1="100" y1="135" x2="300" y2="135" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4"/>
-                <text x="365" y="100" text-anchor="middle" font-weight="bold" fill="#475569" font-size="14">d</text>
-            </svg>
-        </div>
-        
-        <!-- Fórmula -->
-        <div class="text-center mb-6 bg-blue-50 py-3 rounded-lg border border-blue-100">
-            <p class="text-lg font-serif italic text-blue-900">R = <span class="inline-block align-middle text-center"><span class="border-b border-blue-900 block">3 P L</span><span>2 b d²</span></span></p>
-        </div>
+        <div class="p-6">
+            <!-- Contenedor del Gráfico -->
+            <div class="bg-[#f0f4f8] rounded-xl p-4 mb-6 border border-blue-50 flex justify-center">
+                <svg viewBox="0 0 450 180" class="w-full max-w-md">
+                    <!-- Viga Principal -->
+                    <rect x="50" y="70" width="260" height="30" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+                    <!-- Apoyos -->
+                    <polygon points="80,100 65,125 95,125" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+                    <polygon points="280,100 265,125 295,125" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+                    <!-- Cota L (Luz) -->
+                    <line x1="80" y1="135" x2="80" y2="145" stroke="#2563eb" stroke-width="2"/>
+                    <line x1="280" y1="135" x2="280" y2="145" stroke="#2563eb" stroke-width="2"/>
+                    <line x1="80" y1="140" x2="280" y2="140" stroke="#2563eb" stroke-width="2"/>
+                    <text x="180" y="160" text-anchor="middle" font-weight="bold" fill="#2563eb" font-size="14">Luz (L)</text>
+                    <!-- Carga P (Punto central) -->
+                    <line x1="180" y1="20" x2="180" y2="65" stroke="#dc2626" stroke-width="3"/>
+                    <polygon points="180,70 174,60 186,60" fill="#dc2626"/>
+                    <text x="180" y="12" text-anchor="middle" font-weight="bold" fill="#dc2626" font-size="14">Carga (P)</text>
+                    
+                    <!-- Sección Transversal (Derecha) -->
+                    <line x1="315" y1="85" x2="340" y2="85" stroke="#64748b" stroke-dasharray="3" stroke-width="1.5"/>
+                    <rect x="350" y="60" width="40" height="50" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+                    <text x="370" y="40" text-anchor="middle" fill="#475569" font-size="12">Ancho</text>
+                    <text x="370" y="55" text-anchor="middle" font-weight="bold" fill="#475569" font-size="12">(b)</text>
+                    <text x="330" y="90" text-anchor="middle" fill="#475569" font-size="12">Prof.</text>
+                    <text x="330" y="105" text-anchor="middle" font-weight="bold" fill="#475569" font-size="12">(d)</text>
+                    <!-- Líneas guía sección -->
+                    <line x1="350" y1="30" x2="390" y2="30" stroke="#94a3b8" stroke-dasharray="2"/>
+                    <line x1="340" y1="60" x2="340" y2="110" stroke="#94a3b8" stroke-dasharray="2"/>
+                </svg>
+            </div>
 
-        <div class="space-y-5">
+            <!-- Caja de Fórmula -->
+            <div class="bg-[#f8fafc] border border-gray-200 rounded-xl py-4 flex justify-center items-center mb-6 shadow-sm">
+                <span class="text-gray-800 text-lg flex items-center">
+                    Fórmula: <strong class="ml-2 mr-2">R =</strong>
+                    <span class="flex flex-col text-center font-bold">
+                        <span class="border-b-2 border-black px-2 pb-0.5">3PL</span>
+                        <span class="pt-0.5">2bd²</span>
+                    </span>
+                </span>
+            </div>
+
             <!-- Entradas de datos -->
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Carga Máxima (P) [kN]</label>
-                <input type="number" id="cargaP" class="w-full rounded-lg border-slate-300 bg-slate-50 px-4 py-2.5 focus:border-blue-500 focus:ring-blue-500 transition-colors" placeholder="Ej: 19.6">
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-x-4 gap-y-5 mb-5">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Ancho (b) [cm]</label>
-                    <input type="number" id="anchoB" class="w-full rounded-lg border-slate-300 bg-slate-50 px-4 py-2.5 focus:border-blue-500 focus:ring-blue-500 transition-colors" placeholder="Ej: 15">
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Carga Máxima (P)</label>
+                    <div class="input-group">
+                        <input type="number" id="cargaP" class="rounded-lg border border-gray-300 py-2.5 pl-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="Ej: 19.6">
+                        <span class="unit">kN</span>
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Altura (d) [cm]</label>
-                    <input type="number" id="alturaD" class="w-full rounded-lg border-slate-300 bg-slate-50 px-4 py-2.5 focus:border-blue-500 focus:ring-blue-500 transition-colors" placeholder="Ej: 15">
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Luz del claro (L)</label>
+                    <div class="input-group">
+                        <input type="number" id="luzL" class="rounded-lg border border-gray-300 py-2.5 pl-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="Ej: 45.0">
+                        <span class="unit">cm</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Ancho (b)</label>
+                    <div class="input-group">
+                        <input type="number" id="anchoB" class="rounded-lg border border-gray-300 py-2.5 pl-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="Ej: 15.0">
+                        <span class="unit">cm</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Profundidad (d)</label>
+                    <div class="input-group">
+                        <input type="number" id="alturaD" class="rounded-lg border border-gray-300 py-2.5 pl-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="Ej: 15.0">
+                        <span class="unit">cm</span>
+                    </div>
                 </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-semibold text-slate-700 mb-1">Longitud de claro (L) [cm]</label>
-                <input type="number" id="luzL" class="w-full rounded-lg border-slate-300 bg-slate-50 px-4 py-2.5 focus:border-blue-500 focus:ring-blue-500 transition-colors" placeholder="Ej: 45">
+            <!-- Nuevo campo: Resistencia de diseño (Separado visualmente) -->
+            <div class="mb-6 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                <label class="block text-sm font-bold text-blue-800 mb-1">Resistencia de diseño f'c (Opcional)</label>
+                <div class="input-group">
+                    <input type="number" id="fcDiseno" class="rounded-lg border border-blue-200 py-2 pl-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="Ej: 400">
+                    <span class="unit">kgf/cm²</span>
+                </div>
             </div>
 
-            <hr class="border-slate-200 my-2">
-
-            <!-- Nuevo campo de validación -->
-            <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
-                <label class="block text-sm font-bold text-indigo-800 mb-1">Resistencia de diseño f'c [kgf/cm²]</label>
-                <p class="text-xs text-indigo-600 mb-2">Opcional. Úsalo para evaluar la aceptación del lote.</p>
-                <input type="number" id="fcDiseno" class="w-full rounded-lg border-indigo-200 bg-white px-4 py-2.5 focus:border-indigo-500 focus:ring-indigo-500 transition-colors" placeholder="Ej: 400">
-            </div>
-
-            <button onclick="calcularModulo()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition-all active:scale-[0.98]">
-                Calcular Módulo de Rotura
+            <!-- Botón -->
+            <button onclick="calcularModulo()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold py-3 rounded-xl shadow-md transition-colors">
+                Calcular Módulo (R)
             </button>
-        </div>
 
-        <!-- Caja de Resultados -->
-        <div id="resultadoCaja" class="mt-8 hidden transform transition-all">
-            <div class="bg-white p-5 rounded-xl border-2 border-slate-800 text-center shadow-sm relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
-                <p class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Resultado Experimental (R)</p>
-                <p id="resultadoKgf" class="text-4xl font-extrabold text-slate-800"></p>
-                <p id="resultadoMpa" class="text-xl font-medium text-slate-500 mt-1 mb-4"></p>
-                
-                <!-- Evaluación de Aceptación -->
-                <div id="evaluacionCaja" class="hidden border-t border-slate-100 pt-4 mt-2">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Requisito Teórico (2√f'c)</p>
-                    <p id="resultadoTeorico" class="text-lg font-bold text-slate-700 mb-3"></p>
-                    <div id="badgeEstado" class="inline-block px-5 py-2 rounded-full text-sm font-black tracking-wide text-white shadow-sm transition-colors"></div>
+            <!-- Resultados -->
+            <div id="resultadoCaja" class="mt-6 hidden">
+                <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 text-center">
+                    <p class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Resultado Experimental</p>
+                    <p id="resultadoKgf" class="text-4xl font-extrabold text-blue-600"></p>
+                    <p id="resultadoMpa" class="text-lg font-semibold text-gray-600 mt-1"></p>
+                    
+                    <!-- Evaluación -->
+                    <div id="evaluacionCaja" class="hidden mt-4 pt-4 border-t border-gray-200">
+                        <p class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Requisito Teórico (2√f'c)</p>
+                        <!-- Aquí mostramos el teórico en MPa primero, como lo pediste -->
+                        <p id="resultadoTeorico" class="text-2xl font-bold text-gray-800 mb-3"></p>
+                        <div id="badgeEstado" class="inline-block px-4 py-1.5 rounded-full text-sm font-bold text-white shadow-sm"></div>
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
 
     <script>
         function calcularModulo() {
             const P_kn = parseFloat(document.getElementById('cargaP').value);
+            const L = parseFloat(document.getElementById('luzL').value);
             const b = parseFloat(document.getElementById('anchoB').value);
             const d = parseFloat(document.getElementById('alturaD').value);
-            const L = parseFloat(document.getElementById('luzL').value);
             const fc = parseFloat(document.getElementById('fcDiseno').value);
 
-            if (!P_kn || !b || !d || !L) {
-                alert('Por favor, completa los datos de carga y dimensiones de la viga.');
+            if (!P_kn || !L || !b || !d) {
+                alert('Por favor, ingresa los datos de Carga, Luz, Ancho y Profundidad.');
                 return;
             }
 
-            // Conversiones precisas (1 kN = 101.9716 kgf)
+            // Conversión estricta de kN a kgf
             const P_kgf = P_kn * 101.9716;
 
-            // R = 3PL / 2bd²
+            // Cálculo del Módulo Experimental
             const R_kgf = (3 * P_kgf * L) / (2 * b * Math.pow(d, 2));
             const R_mpa = R_kgf * 0.0980665;
 
-            // Mostrar resultados
+            // Mostrar resultados experimentales
             document.getElementById('resultadoKgf').innerText = R_kgf.toFixed(2) + ' kgf/cm²';
             document.getElementById('resultadoMpa').innerText = R_mpa.toFixed(2) + ' MPa';
             
-            // Lógica de evaluación si se ingresó f'c
             const evaluacionCaja = document.getElementById('evaluacionCaja');
             const badgeEstado = document.getElementById('badgeEstado');
 
+            // Lógica de validación si se ingresó f'c
             if (fc > 0) {
-                const R_teorico = 2 * Math.sqrt(fc);
-                document.getElementById('resultadoTeorico').innerText = R_teorico.toFixed(2) + ' kgf/cm²';
+                // Cálculo del Teórico
+                const R_teorico_kgf = 2 * Math.sqrt(fc);
+                const R_teorico_mpa = R_teorico_kgf * 0.0980665;
                 
-                // Reiniciar clases del badge
-                badgeEstado.className = 'inline-block px-5 py-2 rounded-full text-sm font-black tracking-wide text-white shadow-sm transition-colors';
+                // Mostrar Teórico en MPa (y kgf/cm2 como complemento)
+                document.getElementById('resultadoTeorico').innerText = R_teorico_mpa.toFixed(2) + ' MPa (' + R_teorico_kgf.toFixed(2) + ' kgf/cm²)';
                 
-                if (R_kgf >= R_teorico) {
-                    badgeEstado.innerText = '✓ CUMPLE';
-                    badgeEstado.classList.add('bg-emerald-500');
-                } else if (R_kgf >= (R_teorico - 3.5)) {
-                    badgeEstado.innerText = '⚠ CUMPLE (Tolerancia 3.5)';
-                    badgeEstado.classList.add('bg-amber-500');
+                // Evaluación (usando los valores en kgf/cm2 para la tolerancia de 3.5 exigida por norma)
+                badgeEstado.className = 'inline-block px-4 py-1.5 rounded-full text-sm font-bold text-white shadow-sm';
+                
+                if (R_kgf >= R_teorico_kgf) {
+                    badgeEstado.innerText = 'CUMPLE';
+                    badgeEstado.classList.add('bg-green-500');
+                } else if (R_kgf >= (R_teorico_kgf - 3.5)) {
+                    badgeEstado.innerText = 'CUMPLE (Dentro de tolerancia)';
+                    badgeEstado.classList.add('bg-yellow-500');
                 } else {
-                    badgeEstado.innerText = '✗ NO CUMPLE (Observado)';
-                    badgeEstado.classList.add('bg-rose-500');
+                    badgeEstado.innerText = 'NO CUMPLE (Observado)';
+                    badgeEstado.classList.add('bg-red-500');
                 }
                 evaluacionCaja.classList.remove('hidden');
             } else {
                 evaluacionCaja.classList.add('hidden');
             }
 
-            // Mostrar animación de la caja principal
-            const caja = document.getElementById('resultadoCaja');
-            caja.classList.remove('hidden');
-            caja.classList.add('animate-fade-in-up');
+            // Mostrar la caja de resultados
+            document.getElementById('resultadoCaja').classList.remove('hidden');
         }
     </script>
-
-    <style>
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-up {
-            animation: fadeInUp 0.4s ease-out forwards;
-        }
-    </style>
 </body>
 </html>
