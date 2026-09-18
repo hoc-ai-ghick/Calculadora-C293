@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Módulo de Ruptura ASTM C78</title>
+    <title>Calculadora Módulo de Ruptura (ASTM C293 & C78)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .input-group {
@@ -20,6 +20,14 @@
             right: 1rem;
             color: #6b7280;
         }
+        /* Transiciones suaves para los cambios de interfaz */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
@@ -27,69 +35,95 @@
     <div class="bg-white max-w-lg w-full rounded-2xl shadow-xl overflow-hidden">
         
         <!-- Encabezado Azul -->
-        <div class="bg-blue-600 py-6 text-center">
+        <div class="bg-blue-600 py-6 text-center transition-all duration-300" id="headerCaja">
             <h1 class="text-2xl font-bold text-white">Módulo de Ruptura</h1>
-            <p class="text-blue-100 text-sm mt-1">ASTM C78 - Carga en los tercios de la luz</p>
+            <p id="subtituloNorma" class="text-blue-100 text-sm mt-1">ASTM C293 - Carga en el punto central</p>
         </div>
 
         <div class="p-6">
-            <!-- Contenedor del Gráfico -->
-            <div class="bg-[#f0f4f8] rounded-xl p-4 mb-6 border border-blue-50 flex justify-center">
-                <svg viewBox="0 0 450 190" class="w-full max-w-md">
+            
+            <!-- Selector de Norma Principal -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-gray-700 mb-2">Seleccione el método de ensayo:</label>
+                <div class="relative">
+                    <select id="normaSelect" onchange="cambiarNorma()" class="w-full bg-blue-50 text-blue-900 border-2 border-blue-200 rounded-xl py-3 px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition font-bold text-base cursor-pointer appearance-none">
+                        <option value="c293">Norma ASTM C293 (Carga al Centro)</option>
+                        <option value="c78">Norma ASTM C78 (Carga a los Tercios)</option>
+                    </select>
+                    <!-- Flecha personalizada para el select -->
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-blue-700">
+                        <svg class="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenedor del Gráfico Dinámico -->
+            <div class="bg-[#f0f4f8] rounded-xl p-4 mb-6 border border-blue-50 flex justify-center fade-in">
+                
+                <!-- SVG ASTM C293 -->
+                <svg id="svg-c293" viewBox="0 0 450 180" class="w-full max-w-md block">
+                    <rect x="50" y="70" width="260" height="30" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+                    <polygon points="80,100 65,125 95,125" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+                    <polygon points="280,100 265,125 295,125" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+                    <line x1="80" y1="135" x2="80" y2="145" stroke="#2563eb" stroke-width="2"/>
+                    <line x1="280" y1="135" x2="280" y2="145" stroke="#2563eb" stroke-width="2"/>
+                    <line x1="80" y1="140" x2="280" y2="140" stroke="#2563eb" stroke-width="2"/>
+                    <text x="180" y="160" text-anchor="middle" font-weight="bold" fill="#2563eb" font-size="14">Luz (L)</text>
+                    <line x1="180" y1="20" x2="180" y2="65" stroke="#dc2626" stroke-width="3"/>
+                    <polygon points="180,70 174,60 186,60" fill="#dc2626"/>
+                    <text x="180" y="12" text-anchor="middle" font-weight="bold" fill="#dc2626" font-size="14">Carga (P)</text>
+                    <line x1="315" y1="85" x2="340" y2="85" stroke="#64748b" stroke-dasharray="3" stroke-width="1.5"/>
+                    <rect x="350" y="60" width="40" height="50" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+                    <text x="370" y="40" text-anchor="middle" fill="#475569" font-size="12">Ancho (b)</text>
+                    <text x="330" y="90" text-anchor="middle" fill="#475569" font-size="12">Prof. (d)</text>
+                    <line x1="350" y1="30" x2="390" y2="30" stroke="#94a3b8" stroke-dasharray="2"/>
+                    <line x1="340" y1="60" x2="340" y2="110" stroke="#94a3b8" stroke-dasharray="2"/>
+                </svg>
+
+                <!-- SVG ASTM C78 (Oculto por defecto) -->
+                <svg id="svg-c78" viewBox="0 0 450 190" class="w-full max-w-md hidden">
                     <rect x="50" y="80" width="260" height="30" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
                     <polygon points="80,110 65,135 95,135" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
                     <polygon points="280,110 265,135 295,135" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
-                    
                     <line x1="80" y1="145" x2="80" y2="155" stroke="#2563eb" stroke-width="2"/>
                     <line x1="147" y1="145" x2="147" y2="155" stroke="#2563eb" stroke-width="2"/>
                     <line x1="213" y1="145" x2="213" y2="155" stroke="#2563eb" stroke-width="2"/>
                     <line x1="280" y1="145" x2="280" y2="155" stroke="#2563eb" stroke-width="2"/>
                     <line x1="80" y1="150" x2="280" y2="150" stroke="#2563eb" stroke-width="2"/>
-                    
                     <text x="113.5" y="168" text-anchor="middle" fill="#2563eb" font-size="12">L/3</text>
                     <text x="180" y="168" text-anchor="middle" font-weight="bold" fill="#2563eb" font-size="13">Luz (L)</text>
                     <text x="246.5" y="168" text-anchor="middle" fill="#2563eb" font-size="12">L/3</text>
-
                     <line x1="147" y1="50" x2="147" y2="78" stroke="#dc2626" stroke-width="2"/>
                     <polygon points="147,80 142,70 152,70" fill="#dc2626"/>
                     <line x1="213" y1="50" x2="213" y2="78" stroke="#dc2626" stroke-width="2"/>
                     <polygon points="213,80 208,70 218,70" fill="#dc2626"/>
-                    
                     <line x1="147" y1="50" x2="213" y2="50" stroke="#dc2626" stroke-width="3"/>
                     <line x1="180" y1="15" x2="180" y2="48" stroke="#dc2626" stroke-width="3"/>
                     <polygon points="180,50 174,40 186,40" fill="#dc2626"/>
-                    
                     <text x="180" y="10" text-anchor="middle" font-weight="bold" fill="#dc2626" font-size="14">Carga (P)</text>
-                    <text x="130" y="65" text-anchor="middle" fill="#dc2626" font-size="10">P/2</text>
-                    <text x="230" y="65" text-anchor="middle" fill="#dc2626" font-size="10">P/2</text>
-                    
                     <line x1="315" y1="95" x2="340" y2="95" stroke="#64748b" stroke-dasharray="3" stroke-width="1.5"/>
                     <rect x="350" y="70" width="40" height="50" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
-                    <text x="370" y="50" text-anchor="middle" fill="#475569" font-size="12">Ancho</text>
-                    <text x="370" y="65" text-anchor="middle" font-weight="bold" fill="#475569" font-size="12">(b)</text>
-                    <text x="330" y="100" text-anchor="middle" fill="#475569" font-size="12">Prof.</text>
-                    <text x="330" y="115" text-anchor="middle" font-weight="bold" fill="#475569" font-size="12">(d)</text>
-                    <line x1="350" y1="40" x2="390" y2="40" stroke="#94a3b8" stroke-dasharray="2"/>
-                    <line x1="340" y1="70" x2="340" y2="120" stroke="#94a3b8" stroke-dasharray="2"/>
+                    <text x="370" y="50" text-anchor="middle" fill="#475569" font-size="12">Ancho (b)</text>
+                    <text x="330" y="100" text-anchor="middle" fill="#475569" font-size="12">Prof. (d)</text>
                 </svg>
             </div>
 
-            <!-- Selector de tipo de fractura -->
-            <div class="mb-4">
-                <label class="block text-sm font-bold text-gray-700 mb-1">Ubicación de la rotura</label>
-                <select id="tipoFractura" onchange="actualizarInterfaz()" class="w-full rounded-lg border border-gray-300 py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white text-sm font-medium">
+            <!-- Opciones exclusivas para ASTM C78 -->
+            <div id="opciones-c78" class="mb-4 hidden fade-in">
+                <label class="block text-sm font-bold text-gray-700 mb-1">Ubicación de la rotura (C78)</label>
+                <select id="tipoFractura" onchange="actualizarFormula()" class="w-full rounded-lg border border-gray-300 py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white text-sm font-medium">
                     <option value="caso1">Caso 1: Dentro del tercio medio de la luz</option>
                     <option value="caso2">Caso 2: Fuera del tercio medio (máx. 5% de L)</option>
                 </select>
             </div>
 
             <!-- Caja de Fórmula Dinámica -->
-            <div class="bg-[#f8fafc] border border-gray-200 rounded-xl py-4 flex justify-center items-center mb-6 shadow-sm transition-all">
+            <div class="bg-[#f8fafc] border border-gray-200 rounded-xl py-4 flex justify-center items-center mb-6 shadow-sm fade-in">
                 <span class="text-gray-800 text-lg flex items-center">
                     Fórmula: <strong class="ml-2 mr-2">R =</strong>
                     <span class="flex flex-col text-center font-bold">
-                        <span id="formulaNum" class="border-b-2 border-black px-2 pb-0.5">PL</span>
-                        <span class="pt-0.5">bd²</span>
+                        <span id="formulaNum" class="border-b-2 border-black px-2 pb-0.5">3PL</span>
+                        <span id="formulaDen" class="pt-0.5">2bd²</span>
                     </span>
                 </span>
             </div>
@@ -125,14 +159,14 @@
                     </div>
                 </div>
                 
-                <!-- Campo Dinámico: Distancia 'a' (Oculto por defecto) -->
-                <div id="contenedorA" class="col-span-2 hidden bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                <!-- Campo Dinámico: Distancia 'a' (Solo C78 Caso 2) -->
+                <div id="contenedorA" class="col-span-2 hidden bg-yellow-50 p-3 rounded-lg border border-yellow-200 fade-in">
                     <label class="block text-sm font-bold text-yellow-800 mb-1">Distancia al apoyo cercano (a)</label>
                     <div class="input-group">
                         <input type="number" id="distanciaA" class="rounded-lg border border-yellow-300 py-2.5 pl-3 focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition" placeholder="Ej: 14.2">
                         <span class="unit">cm</span>
                     </div>
-                    <p class="text-xs text-yellow-700 mt-1">Distancia promedio entre la línea de fractura y el apoyo más cercano.</p>
+                    <p class="text-xs text-yellow-700 mt-1">Distancia promedio entre la fractura y el apoyo más cercano.</p>
                 </div>
             </div>
 
@@ -151,7 +185,7 @@
             </button>
 
             <!-- Resultados -->
-            <div id="resultadoCaja" class="mt-6 hidden">
+            <div id="resultadoCaja" class="mt-6 hidden fade-in">
                 <div class="bg-gray-50 rounded-xl p-5 border border-gray-200 text-center">
                     <p class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">Resultado Experimental</p>
                     <p id="resultadoKgf" class="text-4xl font-extrabold text-blue-600"></p>
@@ -170,22 +204,69 @@
     </div>
 
     <script>
-        function actualizarInterfaz() {
-            const tipo = document.getElementById('tipoFractura').value;
-            const contenedorA = document.getElementById('contenedorA');
-            const formulaNum = document.getElementById('formulaNum');
+        // Función principal para cambiar de Norma
+        function cambiarNorma() {
+            const norma = document.getElementById('normaSelect').value;
+            const subtitulo = document.getElementById('subtituloNorma');
             
-            if (tipo === 'caso2') {
-                contenedorA.classList.remove('hidden');
-                formulaNum.innerText = '3Pa';
+            // Elementos UI
+            const svgC293 = document.getElementById('svg-c293');
+            const svgC78 = document.getElementById('svg-c78');
+            const opcionesC78 = document.getElementById('opciones-c78');
+            const resultadoCaja = document.getElementById('resultadoCaja');
+
+            // Ocultar resultados previos al cambiar de norma
+            resultadoCaja.classList.add('hidden');
+
+            if (norma === 'c293') {
+                subtitulo.innerText = "ASTM C293 - Carga en el punto central";
+                svgC293.classList.remove('hidden');
+                svgC293.classList.add('block');
+                svgC78.classList.add('hidden');
+                svgC78.classList.remove('block');
+                opcionesC78.classList.add('hidden');
             } else {
+                subtitulo.innerText = "ASTM C78 - Carga en los tercios de la luz";
+                svgC293.classList.add('hidden');
+                svgC293.classList.remove('block');
+                svgC78.classList.remove('hidden');
+                svgC78.classList.add('block');
+                opcionesC78.classList.remove('hidden');
+                // Reseteamos el selector de fractura al cambiar a C78
+                document.getElementById('tipoFractura').value = 'caso1'; 
+            }
+            
+            actualizarFormula();
+        }
+
+        // Función para actualizar la fórmula y campos mostrados
+        function actualizarFormula() {
+            const norma = document.getElementById('normaSelect').value;
+            const formulaNum = document.getElementById('formulaNum');
+            const formulaDen = document.getElementById('formulaDen');
+            const contenedorA = document.getElementById('contenedorA');
+
+            if (norma === 'c293') {
+                formulaNum.innerText = '3PL';
+                formulaDen.innerText = '2bd²';
                 contenedorA.classList.add('hidden');
-                formulaNum.innerText = 'PL';
+            } else {
+                const tipoFractura = document.getElementById('tipoFractura').value;
+                formulaDen.innerText = 'bd²';
+                
+                if (tipoFractura === 'caso1') {
+                    formulaNum.innerText = 'PL';
+                    contenedorA.classList.add('hidden');
+                } else {
+                    formulaNum.innerText = '3Pa';
+                    contenedorA.classList.remove('hidden');
+                }
             }
         }
 
+        // Lógica Matemática Principal
         function calcularModulo() {
-            const tipo = document.getElementById('tipoFractura').value;
+            const norma = document.getElementById('normaSelect').value;
             const P_kn = parseFloat(document.getElementById('cargaP').value);
             const L = parseFloat(document.getElementById('luzL').value);
             const b = parseFloat(document.getElementById('anchoB').value);
@@ -193,44 +274,51 @@
             const fc = parseFloat(document.getElementById('fcDiseno').value);
 
             if (!P_kn || !L || !b || !d) {
-                alert('Por favor, ingresa los datos de Carga, Luz, Ancho y Profundidad.');
+                alert('Por favor, ingresa los datos base: Carga, Luz, Ancho y Profundidad.');
                 return;
             }
 
             const P_kgf = P_kn * 101.9716;
             let R_kgf = 0;
 
-            if (tipo === 'caso1') {
-                // Caso ideal (Rotura en el tercio medio)
-                R_kgf = (P_kgf * L) / (b * Math.pow(d, 2));
+            if (norma === 'c293') {
+                // Cálculo ASTM C293
+                R_kgf = (3 * P_kgf * L) / (2 * b * Math.pow(d, 2));
             } else {
-                // Caso 2 (Rotura fuera del tercio medio)
-                const a = parseFloat(document.getElementById('distanciaA').value);
-                if (!a) {
-                    alert('Por favor, ingresa la distancia (a) para este caso.');
-                    return;
-                }
+                // Cálculo ASTM C78
+                const tipoFractura = document.getElementById('tipoFractura').value;
                 
-                // Validación del 5% de la luz libre
-                const tercioLuz = L / 3;
-                const limiteExterior = tercioLuz - (L * 0.05);
-                
-                if (a < limiteExterior) {
-                    alert('¡Atención! La fractura ocurrió a ' + a + ' cm del apoyo. Se excedió el límite normativo del 5% de L (Mínimo permitido: ' + limiteExterior.toFixed(2) + ' cm). Los resultados de este ensayo deben ser descartados según ASTM C78.');
-                    // Se permite que calcule de todas formas para registro
-                }
+                if (tipoFractura === 'caso1') {
+                    R_kgf = (P_kgf * L) / (b * Math.pow(d, 2));
+                } else {
+                    const a = parseFloat(document.getElementById('distanciaA').value);
+                    if (!a) {
+                        alert('Por favor, ingresa la distancia (a) para este caso de fractura.');
+                        return;
+                    }
+                    
+                    const tercioLuz = L / 3;
+                    const limiteExterior = tercioLuz - (L * 0.05);
+                    
+                    if (a < limiteExterior) {
+                        alert('¡Atención! La fractura ocurrió a ' + a + ' cm del apoyo. Se excedió el límite normativo del 5% de L permitido (Mínimo: ' + limiteExterior.toFixed(2) + ' cm). Los resultados de este ensayo deben descartarse según ASTM C78.');
+                    }
 
-                R_kgf = (3 * P_kgf * a) / (b * Math.pow(d, 2));
+                    R_kgf = (3 * P_kgf * a) / (b * Math.pow(d, 2));
+                }
             }
 
+            // Conversión a MPa
             const R_mpa = R_kgf * 0.0980665;
 
+            // Mostrar resultados
             document.getElementById('resultadoKgf').innerText = R_kgf.toFixed(2) + ' kgf/cm²';
             document.getElementById('resultadoMpa').innerText = R_mpa.toFixed(2) + ' MPa';
             
             const evaluacionCaja = document.getElementById('evaluacionCaja');
             const badgeEstado = document.getElementById('badgeEstado');
 
+            // Evaluación de f'c
             if (fc > 0) {
                 const R_teorico_kgf = 2 * Math.sqrt(fc);
                 const R_teorico_mpa = R_teorico_kgf * 0.0980665;
@@ -256,6 +344,11 @@
 
             document.getElementById('resultadoCaja').classList.remove('hidden');
         }
+
+        // Inicializar interfaz
+        window.onload = function() {
+            cambiarNorma();
+        };
     </script>
 </body>
 </html>
