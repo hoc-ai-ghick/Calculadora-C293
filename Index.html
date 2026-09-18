@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Módulo de Ruptura (ASTM C293)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 0.25rem;
+        }
+        .fraction span.numerator {
+            border-bottom: 2px solid #1f2937;
+            padding: 0 0.5rem;
+        }
+        .fraction span.denominator {
+            padding: 0 0.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <main class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
+        
+        <!-- Header -->
+        <header class="bg-blue-700 p-6 text-white text-center">
+            <h1 class="text-2xl font-bold">Módulo de Ruptura</h1>
+            <p class="text-blue-100 text-sm mt-1">ASTM C293 - Carga en el punto central</p>
+        </header>
+
+        <div class="p-6 space-y-6">
+            
+            <!-- Diagrama / Imagen Representativa -->
+            <div class="bg-blue-50 rounded-xl p-4 flex justify-center border border-blue-100">
+                <svg viewBox="0 0 350 180" class="w-full max-w-sm h-auto" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Textos -->
+                    <text x="135" y="20" font-family="Arial" font-size="14" font-weight="bold" fill="#dc2626">Carga (P)</text>
+                    <text x="135" y="165" font-family="Arial" font-size="14" font-weight="bold" fill="#2563eb">Luz (L)</text>
+                    <text x="310" y="65" font-family="Arial" font-size="12" font-weight="bold" fill="#4b5563">Ancho</text>
+                    <text x="317" y="80" font-family="Arial" font-size="12" font-weight="bold" fill="#4b5563">(b)</text>
+                    <text x="260" y="110" font-family="Arial" font-size="12" font-weight="bold" fill="#4b5563">Prof.</text>
+                    <text x="265" y="125" font-family="Arial" font-size="12" font-weight="bold" fill="#4b5563">(d)</text>
+
+                    <!-- Flecha de Carga P -->
+                    <line x1="150" y1="25" x2="150" y2="70" stroke="#dc2626" stroke-width="4"/>
+                    <polygon points="145,65 155,65 150,75" fill="#dc2626" />
+
+                    <!-- Viga Principal -->
+                    <rect x="30" y="75" width="240" height="35" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+                    
+                    <!-- Apoyos inferiores -->
+                    <polygon points="65,110 50,135 80,135" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+                    <polygon points="235,110 220,135 250,135" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+
+                    <!-- Acotación L -->
+                    <line x1="65" y1="145" x2="235" y2="145" stroke="#2563eb" stroke-width="2"/>
+                    <line x1="65" y1="140" x2="65" y2="150" stroke="#2563eb" stroke-width="2"/>
+                    <line x1="235" y1="140" x2="235" y2="150" stroke="#2563eb" stroke-width="2"/>
+
+                    <!-- Sección transversal (Derecha) -->
+                    <rect x="295" y="85" width="45" height="55" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+                    <!-- Cotas sección -->
+                    <!-- b -->
+                    <line x1="295" y1="75" x2="340" y2="75" stroke="#4b5563" stroke-width="1.5" stroke-dasharray="2,2"/>
+                    <!-- d -->
+                    <line x1="285" y1="85" x2="285" y2="140" stroke="#4b5563" stroke-width="1.5" stroke-dasharray="2,2"/>
+                </svg>
+            </div>
+
+            <!-- Fórmula -->
+            <div class="flex items-center justify-center bg-gray-50 rounded-lg p-3 border border-gray-200 shadow-inner">
+                <span class="text-gray-700 font-semibold mr-2">Fórmula:</span>
+                <div class="text-xl font-serif text-gray-900 font-bold flex items-center">
+                    <span>R = </span>
+                    <div class="fraction">
+                        <span class="numerator">3PL</span>
+                        <span class="denominator">2bd²</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de Entrada -->
+            <form id="calcForm" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    
+                    <!-- Carga (P) -->
+                    <div class="flex flex-col">
+                        <label for="input-P" class="text-sm font-semibold text-gray-700 mb-1">Carga Máxima (P)</label>
+                        <div class="relative">
+                            <input type="number" id="input-P" step="0.001" min="0.001" placeholder="Ej: 19.6" required
+                                class="w-full pl-3 pr-12 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow">
+                            <span class="absolute right-3 top-2 text-gray-500 font-medium">kN</span>
+                        </div>
+                    </div>
+
+                    <!-- Longitud (L) -->
+                    <div class="flex flex-col">
+                        <label for="input-L" class="text-sm font-semibold text-gray-700 mb-1">Luz del claro (L)</label>
+                        <div class="relative">
+                            <input type="number" id="input-L" step="0.1" min="0.1" placeholder="Ej: 45.0" required
+                                class="w-full pl-3 pr-12 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow">
+                            <span class="absolute right-3 top-2 text-gray-500 font-medium">cm</span>
+                        </div>
+                    </div>
+
+                    <!-- Ancho (b) -->
+                    <div class="flex flex-col">
+                        <label for="input-b" class="text-sm font-semibold text-gray-700 mb-1">Ancho (b)</label>
+                        <div class="relative">
+                            <input type="number" id="input-b" step="0.1" min="0.1" placeholder="Ej: 15.0" required
+                                class="w-full pl-3 pr-12 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow">
+                            <span class="absolute right-3 top-2 text-gray-500 font-medium">cm</span>
+                        </div>
+                    </div>
+
+                    <!-- Profundidad (d) -->
+                    <div class="flex flex-col">
+                        <label for="input-d" class="text-sm font-semibold text-gray-700 mb-1">Profundidad (d)</label>
+                        <div class="relative">
+                            <input type="number" id="input-d" step="0.1" min="0.1" placeholder="Ej: 15.0" required
+                                class="w-full pl-3 pr-12 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow">
+                            <span class="absolute right-3 top-2 text-gray-500 font-medium">cm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <p id="error-msg" class="text-red-500 text-sm font-medium text-center hidden">Por favor, ingresa valores válidos mayores a 0.</p>
+
+                <!-- Botón de Calcular -->
+                <button type="submit" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
+                    Calcular Módulo (R)
+                </button>
+            </form>
+
+            <!-- Resultado -->
+            <div id="result-container" class="hidden mt-6 bg-green-50 border border-green-200 rounded-xl p-5 text-center shadow-sm">
+                <p class="text-green-800 font-semibold mb-3">El Módulo de Ruptura (R) es:</p>
+                
+                <div class="flex flex-col items-center justify-center gap-3">
+                    <!-- Resultado en kgf/cm2 -->
+                    <div class="flex items-end justify-center gap-2">
+                        <span id="result-value-kgf" class="text-4xl font-bold text-green-700">0.00</span>
+                        <span class="text-lg font-medium text-green-700 mb-1">kgf/cm²</span>
+                    </div>
+                    
+                    <!-- Divisor sutil -->
+                    <div class="w-16 h-px bg-green-300"></div>
+
+                    <!-- Resultado en MPa -->
+                    <div class="flex items-end justify-center gap-2">
+                        <span id="result-value-mpa" class="text-3xl font-bold text-emerald-600">0.00</span>
+                        <span class="text-base font-medium text-emerald-600 mb-1">MPa</span>
+                    </div>
+                </div>
+
+                <p id="calc-detail" class="text-xs text-green-600 mt-4 italic"></p>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('calcForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Obtener valores de los inputs
+            const P_kN = parseFloat(document.getElementById('input-P').value);
+            const L_cm = parseFloat(document.getElementById('input-L').value);
+            const b_cm = parseFloat(document.getElementById('input-b').value);
+            const d_cm = parseFloat(document.getElementById('input-d').value);
+
+            const errorMsg = document.getElementById('error-msg');
+            const resultContainer = document.getElementById('result-container');
+            const resultValueKgf = document.getElementById('result-value-kgf');
+            const resultValueMpa = document.getElementById('result-value-mpa');
+            const calcDetail = document.getElementById('calc-detail');
+
+            // Validación básica
+            if (isNaN(P_kN) || isNaN(L_cm) || isNaN(b_cm) || isNaN(d_cm) || 
+                P_kN <= 0 || L_cm <= 0 || b_cm <= 0 || d_cm <= 0) {
+                errorMsg.classList.remove('hidden');
+                resultContainer.classList.add('hidden');
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+
+            // 1. Conversión de Carga: kN a kgf
+            const FACTOR_CONVERSION_KGF = 101.9716; // 1 kN = 101.9716 kgf (usando gravedad 9.80665)
+            const P_kgf = P_kN * FACTOR_CONVERSION_KGF;
+
+            // 2. Calcular R en kgf/cm²
+            const numerador = 3 * P_kgf * L_cm;
+            const denominador = 2 * b_cm * Math.pow(d_cm, 2);
+            const R_kgf = numerador / denominador;
+
+            // 3. Calcular R en MPa (1 MPa = 10.19716 kgf/cm²)
+            const R_mpa = R_kgf / 10.19716;
+
+            // 4. Mostrar resultados
+            resultValueKgf.textContent = R_kgf.toFixed(2);
+            resultValueMpa.textContent = R_mpa.toFixed(2);
+            
+            calcDetail.textContent = `(Carga convertida: ${P_kN} kN ≈ ${P_kgf.toFixed(1)} kgf)`;
+            
+            // Animación
+            resultContainer.classList.remove('hidden');
+            resultContainer.classList.add('animate-pulse');
+            setTimeout(() => {
+                resultContainer.classList.remove('animate-pulse');
+            }, 400);
+        });
+    </script>
+</body>
+</html>
